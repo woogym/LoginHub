@@ -1,4 +1,15 @@
 spring:
+  profiles:
+    group:
+      "local" : "local, jwt, oauth"
+    active: local
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "local"
+
   datasource:
     url: ${DB_JDBC_URL}
     username: ${DB_USER}
