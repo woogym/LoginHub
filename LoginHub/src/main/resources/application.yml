@@ -9,7 +9,6 @@ spring:
   config:
     activate:
       on-profile: "local"
-
   datasource:
     url: ${DB_JDBC_URL}
     username: ${DB_USER}
@@ -25,3 +24,9 @@ spring:
       hibernate:
         format_sql: false
         use_sql_comments: true
+  data:
+    redis:
+      port: ${REDIS_PORT}
+      host: ${REDIS_SERVER}
+      repositories:
+        enable: false
