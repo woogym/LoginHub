@@ -9,17 +9,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.sql.Update;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Getter
 @Entity
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "USERS")
 public class User {
@@ -56,5 +52,26 @@ public class User {
 
     public void updateRefreshToken(String UpdateRefreshToken) {
         this.refreshToken = UpdateRefreshToken;
+    }
+
+    // 생성자 제한을 걸어 불완전한 객체의 가능성을 차단한다.
+    @Builder
+    public User(Long id,
+                String email, String password,
+                String nickName, String imageUrl,
+                int age, String city,
+                String refreshToken, Role role,
+                SocialType socialType, String socialId) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.nickName = nickName;
+        this.imageUrl = imageUrl;
+        this.age = age;
+        this.city = city;
+        this.refreshToken = refreshToken;
+        this.role = role;
+        this.socialType = socialType;
+        this.socialId = socialId;
     }
 }
