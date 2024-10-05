@@ -1,8 +1,8 @@
-package com.woojin.loginhub.jwt;
+package com.woojin.loginhub.global.jwt;
 
-import com.woojin.loginhub.domain.User;
+import com.woojin.loginhub.app.domain.User;
 import com.woojin.loginhub.global.util.PasswordUtil;
-import com.woojin.loginhub.repository.UserRepository;
+import com.woojin.loginhub.app.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package com.woojin.loginhub.domain;
+package com.woojin.loginhub.app.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

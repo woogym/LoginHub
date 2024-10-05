@@ -1,10 +1,10 @@
-package com.woojin.loginhub.jwt;
+package com.woojin.loginhub.global.jwt;
 
-import com.woojin.loginhub.domain.User;
+import com.woojin.loginhub.app.domain.User;
 import com.woojin.loginhub.global.exception.ErrorCode;
 import com.woojin.loginhub.global.exception.model.CustomException;
-import com.woojin.loginhub.repository.TokenBlacklistRepository;
-import com.woojin.loginhub.repository.UserRepository;
+import com.woojin.loginhub.app.repository.TokenBlacklistRepository;
+import com.woojin.loginhub.app.repository.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.SignatureAlgorithm;

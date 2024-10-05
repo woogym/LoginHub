@@ -1,4 +1,4 @@
-package com.woojin.loginhub.repository;
+package com.woojin.loginhub.app.repository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
-package com.woojin.loginhub.repository;
+package com.woojin.loginhub.app.repository;
 
-import com.woojin.loginhub.domain.SocialType;
-import com.woojin.loginhub.domain.User;
+import com.woojin.loginhub.app.domain.SocialType;
+import com.woojin.loginhub.app.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
