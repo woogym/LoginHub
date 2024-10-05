@@ -1,0 +1,8 @@
+jwt:
+  secret: ${JWT_SECRET}
+  access:
+    expiration: ${ACCESS_TOKEN_VALIDITY_IN_MILLISECONDS}
+    header: Authorization
+  refresh:
+    expiration: ${REFRESH_TOKEN_VALIDITY_IN_MILLISECONDS}
+    header: Authorization-refresh
