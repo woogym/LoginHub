@@ -1,4 +1,4 @@
-package com.woojin.loginhub.service.TokenService;
+package com.woojin.loginhub.jwt.token;
 
 import com.woojin.loginhub.domain.User;
 import com.woojin.loginhub.global.exception.ErrorCode;
@@ -14,6 +14,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.security.Key;
@@ -29,12 +31,13 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
 @Getter
 @Slf4j
-public class TokenProvider {
+public class TokenService {
 
     private final Key key;
     private final long accessTokenValidityTime;
@@ -42,10 +45,16 @@ public class TokenProvider {
     private final TokenBlacklistRepository tokenBlackListRepository;
     private final UserRepository userRepository;
 
-    public TokenProvider(TokenBlacklistRepository tokenBlackListRepository, UserRepository userRepository,
-                         @Value("${jwt.access.expiration}") long accessTokenValidityTime,
-                         @Value("${jwt.refresh.expiration}") long refreshTokenValidityTime,
-                         @Value("${jwt.secret}") String secretKey) {
+    @Value("${jwt.access.header}")
+    private String accessHeader;
+
+    @Value("${jwt.refresh.header}")
+    private String refreshHeader;
+
+    public TokenService(TokenBlacklistRepository tokenBlackListRepository, UserRepository userRepository,
+                        @Value("${jwt.access.expiration}") long accessTokenValidityTime,
+                        @Value("${jwt.refresh.expiration}") long refreshTokenValidityTime,
+                        @Value("${jwt.secret}") String secretKey) {
         byte[] keyBytes = Base64.getDecoder().decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.accessTokenValidityTime = accessTokenValidityTime;
@@ -137,5 +146,74 @@ public class TokenProvider {
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
+    }
+
+    @Transactional
+    public void sendAccessToken(HttpServletResponse response, String accessToken) {
+        response.setStatus(HttpServletResponse.SC_OK);
+
+        setAccessHeader(response, accessToken);
+        log.info("재발급된 AccessToken : {}", accessToken);
+    }
+
+    @Transactional
+    public void sendAccessAndRefreshToken(HttpServletResponse response,
+                                          String accessToken, String refreshToken) {
+        response.setStatus(HttpServletResponse.SC_OK);
+
+        setAccessHeader(response, accessToken);
+        setRefreshHeader(response, refreshToken);
+        log.info("AccessToken, RefreshToken 헤더 설정 완료");
+    }
+
+    public Optional<String> extractRefreshToken(HttpServletRequest request) {
+        return Optional.ofNullable(request.getHeader(refreshHeader))
+                .filter(refreshToken -> refreshToken.startsWith(BEARER))
+                .map(refreshToken -> refreshToken.replace(BEARER, ""));
+    }
+
+    public Optional<String> extractAccessToken(HttpServletRequest request) {
+        return Optional.ofNullable(request.getHeader(accessHeader))
+                .filter(accessToken -> accessToken.startsWith(BEARER))
+                .map(accessToken -> accessToken.replace(BEARER, ""));
+    }
+
+    public Optional<String> extractEmail(String accessToken) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(accessToken)
+                    .getBody();
+
+            return Optional.ofNullable(claims.get(EMAIL_CLAIM, String.class));
+        } catch (Exception e) {
+            log.error("엑세스 토큰이 유효하지 않습니다.");
+            throw new CustomException(ErrorCode.INVALID_TOKEN_EXCEPTION,
+                    ErrorCode.INVALID_TOKEN_EXCEPTION.getMessage());
+        }
+    }
+
+    // RefreshToken DB 저장
+    public void updateRefreshToken(String email, String refreshToken) {
+        userRepository.findByEmail(email)
+                .ifPresentOrElse(
+                        user -> user.updateRefreshToken(refreshToken),
+                        () -> new CustomException(ErrorCode.NOT_FOUND_USER_EXCEPTION,
+                                ErrorCode.NOT_FOUND_USER_EXCEPTION.getMessage())
+                );
+    }
+
+    // 블랙리스트에 토큰 추가
+    public void invalidateToken(String token) {
+        tokenBlackListRepository.addTokenToBlacklist(token, refreshTokenValidityTime);
+    }
+
+    private void setAccessHeader(HttpServletResponse response, String accessToken) {
+        response.setHeader(accessHeader, accessToken);
+    }
+
+    private void setRefreshHeader(HttpServletResponse response, String refreshToken) {
+        response.setHeader(refreshHeader, refreshToken);
     }
 }
