@@ -1,4 +1,4 @@
-package com.woojin.loginhub.jwt.token;
+package com.woojin.loginhub.jwt;
 
 import com.woojin.loginhub.domain.User;
 import com.woojin.loginhub.global.exception.ErrorCode;
