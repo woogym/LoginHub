@@ -30,6 +30,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     private final GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
 
+    // 필터 진입시 [인증 처리, 토큰 재발급, 인증 실패] 과정 처리
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (request.getRequestURI().equals(NO_CHECK_URL)) {
