@@ -67,17 +67,16 @@ public class TokenService {
     private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
     private static final String EMAIL_CLAIM = "email";
-    private static final String ROLE_CLAIM = "Role";
+    private static final String ROLE = "Role";
     private static final String AUTHORIZATION = "Authorization";
 
-    public String createAccessToken(User user) {
+    public String createAccessToken(String email) {
         long nowTime = (new Date().getTime());
         Date accessTokenExpiredTime = new Date(nowTime + accessTokenValidityTime);
 
         return Jwts.builder()
                 .setSubject(ACCESS_TOKEN_SUBJECT)
-                .claim(ROLE_CLAIM, user.getRole().getKey())
-                .claim(EMAIL_CLAIM, user.getEmail())
+                .claim(EMAIL_CLAIM, email)
                 .signWith(key, SignatureAlgorithm.ES512)
                 .compact();
     }
@@ -111,13 +110,13 @@ public class TokenService {
     public Authentication getAuthentication(String token) {
         Claims claims = parseClaims(token);
 
-        if (claims.get("Role") == null) {
+        if (claims.get(ROLE) == null) {
             throw new CustomException(ErrorCode.FORBIDDEN_AUTH_EXCEPTION, "권한이 없습니다.");
         }
 
         // 현재 권한을 관리할때 접두사로 Role이 붙어있기에 추가하는 접두사 추가 로직을 제거한다.
         // LoginService를 참고해보면 UserDetail객체의 roles를 빌드할때 내부동작 과정에서 "ROLE_"접두사를 붙여주기에 일관성있게 관리가 가능하다.
-        Collection<? extends GrantedAuthority> authorities = Arrays.stream(claims.get("Role").toString().split(","))
+        Collection<? extends GrantedAuthority> authorities = Arrays.stream(claims.get(ROLE).toString().split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
