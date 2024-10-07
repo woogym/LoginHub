@@ -115,8 +115,10 @@ public class TokenService {
             throw new CustomException(ErrorCode.FORBIDDEN_AUTH_EXCEPTION, "권한이 없습니다.");
         }
 
+        // 현재 권한을 관리할때 접두사로 Role이 붙어있기에 추가하는 접두사 추가 로직을 제거한다.
+        // LoginService를 참고해보면 UserDetail객체의 roles를 빌드할때 내부동작 과정에서 "ROLE_"접두사를 붙여주기에 일관성있게 관리가 가능하다.
         Collection<? extends GrantedAuthority> authorities = Arrays.stream(claims.get("Role").toString().split(","))
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
         return new UsernamePasswordAuthenticationToken(claims.getSubject(), "", authorities);
