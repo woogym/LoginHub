@@ -1,4 +1,4 @@
-package com.woojin.loginhub.global.jwt;
+package com.woojin.loginhub.global.security;
 
 import com.woojin.loginhub.app.domain.User;
 import com.woojin.loginhub.global.util.PasswordUtil;
