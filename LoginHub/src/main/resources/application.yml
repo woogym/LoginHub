@@ -27,6 +27,6 @@ spring:
   data:
     redis:
       port: ${REDIS_PORT}
-      host: ${REDIS_SERVER}
+      host: ${REDIS_HOST}
       repositories:
         enable: false
