@@ -13,6 +13,8 @@ public enum ErrorCode {
     // 400 Bad Request
     VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     PASSWORD_MISMATCH_EXCEPTION(HttpStatus.BAD_REQUEST,"존재하지 않는 비밀번호 or 비밀번호가 잘못되었습니다"),
+    ALREADY_EXIT_EMAIL_EXCEPTION(HttpStatus.BAD_REQUEST,"이미 존재하는 이메일입니다."),
+    ALREADY_EXIT_NICKNAME_EXCEPTION(HttpStatus.BAD_REQUEST,"이미 존재하는 닉네임입니다."),
     VALIDATION_REQUEST_MISSING_EXCEPTION(HttpStatus.BAD_REQUEST, "필수적인 요청 값이 입력되지 않았습니다."),
     VALIDATION_REQUEST_HEADER_MISSING_EXCEPTION(HttpStatus.BAD_REQUEST, "요청 헤더값이 입력되지 않았습니다."),
     VALIDATION_REQUEST_PARAMETER_MISSING_EXCEPTION(HttpStatus.BAD_REQUEST, "요청 파라미터값이 입력되지 않았습니다."),
