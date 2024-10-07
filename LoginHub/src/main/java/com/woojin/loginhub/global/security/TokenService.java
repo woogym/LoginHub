@@ -22,6 +22,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -107,7 +108,8 @@ public class TokenService {
         }
     }
 
-    public Authentication getAuthentication(String token) {
+    // 기존 로그인 방식에 초점을 둔 getAuthentication 로직
+/*    public Authentication getAuthentication(String token) {
         Claims claims = parseClaims(token);
 
         if (claims.get(ROLE) == null) {
@@ -121,7 +123,28 @@ public class TokenService {
                 .collect(Collectors.toList());
 
         return new UsernamePasswordAuthenticationToken(claims.getSubject(), "", authorities);
-    }
+    }*/
+
+    // 현재 로그인 방식에 중점을 둔 새로운 getAuthentication 로직
+/*    public Authentication getAuthentication(String token) {
+        // 토큰에서 이메일을 추출하여 User 정보를 가져옴
+        Claims claims = parseClaims(token);
+        String email = claims.getSubject();
+
+        // UserRepository에서 해당 이메일로 유저를 찾아옴
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER_EXCEPTION, "유저를 찾을 수 없습니다."));
+
+        // 유저의 정보를 기반으로 Authentication 객체를 생성
+        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
+                .username(user.getEmail())
+                .password(user.getPassword())  // 비밀번호는 실제로 사용되지 않음
+                .roles(user.getRole().name())  // 역할(Role) 설정
+                .build();
+
+        // Authentication 객체를 생성하여 반환
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    }*/
 
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION);
