@@ -55,7 +55,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
         tokenService.extractEmail(refreshToken)
                 .flatMap(userRepository::findByEmail)
                 .ifPresent(user -> {
-                            String newAccessToken = tokenService.createAccessToken(user);
+                            String newAccessToken = tokenService.createAccessToken(user.getEmail());
                             String newRefreshToken = tokenService.createRefreshToken();
                             user.updateRefreshToken(newRefreshToken);  // 유저의 refreshToken 업데이트
                             tokenService.sendAccessAndRefreshToken(response, newAccessToken, newRefreshToken);
