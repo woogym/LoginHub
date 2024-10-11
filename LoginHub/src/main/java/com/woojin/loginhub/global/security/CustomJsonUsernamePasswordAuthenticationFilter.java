@@ -50,7 +50,8 @@ public class CustomJsonUsernamePasswordAuthenticationFilter extends AbstractAuth
         String messageBody = StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8);
 
         // Raw use of Parameterized class -> 제네릭 타입의 소거 관련 문제로 new TypeReference를 통해서 타입을 명시해줬고 이를 통해 런타임시에 castingException을 방지했다.
-        Map<String, String> usernamePasswordMap = objectMapper.readValue(messageBody, new TypeReference<Map<String, String>>() {});
+        Map<String, String> usernamePasswordMap = objectMapper.readValue(messageBody, new TypeReference<>() {
+        });
 
         String email = usernamePasswordMap.get(USERNAME_KEY);
         String password = usernamePasswordMap.get(PASSWORD_KEY);
