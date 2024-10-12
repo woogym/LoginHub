@@ -1,4 +1,4 @@
-package com.woojin.loginhub.oauth2.service;
+package com.woojin.loginhub.oauth2;
 
 import com.woojin.loginhub.app.domain.Role;
 import java.util.Collection;
@@ -10,8 +10,8 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 @Getter
 public class CustomOauth2Service extends DefaultOAuth2User {
 
-    private String email;
-    private Role role;
+    private final String email;
+    private final Role role;
 
     public CustomOauth2Service(Collection<? extends GrantedAuthority> authorities,
                                Map<String, Object> attributes, String nameAttributeKey,
@@ -20,6 +20,4 @@ public class CustomOauth2Service extends DefaultOAuth2User {
         this.email = email;
         this.role = role;
     }
-
-
 }
