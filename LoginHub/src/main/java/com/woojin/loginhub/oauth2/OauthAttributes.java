@@ -13,15 +13,10 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class OauthAttributes {
-
-    private final String nameAttributeKey;
-    private final Oauth2UserInfo oauth2UserInfo;
+public record OauthAttributes(String nameAttributeKey, Oauth2UserInfo oauth2UserInfo) {
 
     @Builder
-    public OauthAttributes(String nameAttributeKey, Oauth2UserInfo oauth2UserInfo) {
-        this.nameAttributeKey = nameAttributeKey;
-        this.oauth2UserInfo = oauth2UserInfo;
+    public OauthAttributes {
     }
 
     public static OauthAttributes of(SocialType socialType,
@@ -46,7 +41,7 @@ public class OauthAttributes {
     }
 
     private static OauthAttributes ofGoogle(String userNameAttributeKey,
-                                           Map<String, Object> attributes) {
+                                            Map<String, Object> attributes) {
         return OauthAttributes.builder()
                 .nameAttributeKey(userNameAttributeKey)
                 .oauth2UserInfo(new GoogleOauth2UserInfo(attributes))
