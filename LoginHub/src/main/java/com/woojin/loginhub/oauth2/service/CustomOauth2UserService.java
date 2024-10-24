@@ -42,7 +42,7 @@ public class CustomOauth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         OauthAttributes extractAttributes = OauthAttributes.of(socialType, userNameAttributeName, attributes);
 
-        User user = getUserEntity(extractAttributes, socialType);
+        User user = getUser(extractAttributes, socialType);
 
         return new CustomOauth2User(
                 Collections.singleton(new SimpleGrantedAuthority(user.getRole().getKey())),
@@ -64,7 +64,7 @@ public class CustomOauth2UserService implements OAuth2UserService<OAuth2UserRequ
         return SocialType.GOOGLE;
     }
 
-    private User getUserEntity(OauthAttributes attributes, SocialType socialType) {
+    private User getUser(OauthAttributes attributes, SocialType socialType) {
         User user = userRepository.findBySocialTypeAndSocialId(socialType,
                 attributes.getOauth2UserInfo().getId()).orElse(null);
 
