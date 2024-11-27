@@ -78,6 +78,8 @@ public class TokenService {
         return Jwts.builder()
                 .setSubject(ACCESS_TOKEN_SUBJECT)
                 .claim(EMAIL_CLAIM, email)
+                .setIssuedAt(new Date())
+                .setExpiration(accessTokenExpiredTime)
                 .signWith(key, SignatureAlgorithm.ES512)
                 .compact();
     }
